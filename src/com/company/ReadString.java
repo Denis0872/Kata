@@ -2,7 +2,6 @@ package com.company;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
 import static com.company.Main.flag;
 
 public class ReadString
@@ -50,12 +49,27 @@ public class ReadString
                 oper = '/';
             }
         }
+       /* try{
+            for (int i = 0; i < MassivDevided.length-1; i++)
+            {
+                int count = 0;
+                if(MassivDevided[i] == MassivDevided[i+1])
+                    count = count + 1;
+                System.out.println(count);
+                break;
 
+            }
+        }
+        catch (Exception e){
+            System.out.println("Лишний оператор");
+            throw new IllegalArgumentException("выражение содержит слишком много операторов");
+        }*/
         String StringAgain = String.valueOf(MassivDevided);
 
         StringAgain = StringAgain.substring(0, strokaVvoda.length()-1).toUpperCase(Locale.ROOT).replaceAll(" ","");
         String[] blocks;
-        blocks = StringAgain.split("[+-/*\\s+]", 2);
+
+            blocks = StringAgain.split("[+-/*\\s+]", 2);
 
         try {
 
@@ -79,7 +93,6 @@ public class ReadString
 
 
         }
-
         catch (Exception e) {
             System.out.println("Оператор не найден");
             throw new IllegalArgumentException("ошибка при вводе оператора. введите правильно");
@@ -114,68 +127,39 @@ public class ReadString
             System.out.println("Введены одновременно две системы счисления");
             throw new IllegalArgumentException("ошибка при вводе данных. ");
         }
-
         try{
-            //boolean flag = false;
+
             for (int i = 0; i < rimskiye.length; i++){
-                if (rimskiye[i].equals(blocks[0]) && rimskiye[i].equals(blocks[1])){
-                    flag = true;}
-                }
-                if(flag=true){
-                    num1 = romanToArabic(blocks[0]);
-                    num2 = romanToArabic(blocks[1]);
-                    oper = strokaVvoda.charAt(blocks[0].length());
-
-                    if ((num1 <num2 )&& (oper == '-')) {
-                        System.out.println("Не существует отрицательных римских чисел");
-                        throw new IllegalArgumentException();
-                    }
-                }
-                else {
-                    num1 = Integer.parseInt(blocks[0]);
-                    num2 = Integer.parseInt(blocks[1]);
-                    oper = strokaVvoda.charAt(blocks[0].length());
-                    if ((num1 > 10 || num1 < 0) || (num2 > 10 || num2 < 0)) {
-                        System.out.println("Вы вышли из допустимого диапозона ввода: числа от 0 до 10 ");
-                        throw new IllegalArgumentException();
-                    }
-                }
-
-
-
+                if (rimskiye[i].equals(blocks[0]) || rimskiye[i].equals(blocks[1]))
+                    {flag = true;}
+            }
         }
         catch (RuntimeException e) {
             throw new IllegalArgumentException("Общее: ошибка ввода данных");
         }
-    }
-/*
-    private  int RomToNum(String rom) {
 
-        if (rom.equals("I")) {
-            return 1;
-        } else if (rom.equals("II")) {
-            return 2;
-        } else if (rom.equals("III")) {
-            return 3;
-        } else if (rom.equals("IV")) {
-            return 4;
-        } else if (rom.equals("V")) {
-            return 5;
-        } else if (rom.equals("VI")) {
-            return 6;
-        } else if (rom.equals("VII")) {
-            return 7;
-        } else if (rom.equals("VIII")) {
-            return 8;
-        } else if (rom.equals("IX")) {
-            return 9;
-        } else if (rom.equals("X")) {
-            return 10;
-        }
-        System.gc();
-        return -1;
+            if(flag){
+                num1 = romanToArabic(blocks[0]);
+                num2 = romanToArabic(blocks[1]);
+                oper = strokaVvoda.charAt(blocks[0].length());
+
+                if ((num1 <num2 )&& (oper == '-')) {
+                    System.out.println("Не существует отрицательных римских чисел");
+                    throw new IllegalArgumentException();
+                }
+            }
+            else {
+                num1 = Integer.parseInt(blocks[0]);
+                num2 = Integer.parseInt(blocks[1]);
+                oper = strokaVvoda.charAt(blocks[0].length());
+                if ((num1 > 10 || num1 < 0) || (num2 > 10 || num2 < 0))
+                {
+                    System.out.println("Вы вышли из допустимого диапозона ввода: числа от 0 до 10 ");
+                    throw new IllegalArgumentException();
+                }
+            }
     }
-*/
+
 enum RomanNumeral {
     I(1), II(2), III(3), IV(4), V(5),
     VI(6), VII(7), VIII(8), IX(9),
@@ -455,5 +439,32 @@ enum RomanNumeral {
     }
     public int getNum2 () {
         return num2;
+    }/*
+    private  int RomToNum(String rom) {
+
+        if (rom.equals("I")) {
+            return 1;
+        } else if (rom.equals("II")) {
+            return 2;
+        } else if (rom.equals("III")) {
+            return 3;
+        } else if (rom.equals("IV")) {
+            return 4;
+        } else if (rom.equals("V")) {
+            return 5;
+        } else if (rom.equals("VI")) {
+            return 6;
+        } else if (rom.equals("VII")) {
+            return 7;
+        } else if (rom.equals("VIII")) {
+            return 8;
+        } else if (rom.equals("IX")) {
+            return 9;
+        } else if (rom.equals("X")) {
+            return 10;
+        }
+        System.gc();
+        return -1;
     }
+*/
 }
