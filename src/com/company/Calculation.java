@@ -16,6 +16,7 @@ public class Calculation
             }
         }
         catch (ArithmeticException  e) { System.out.println("Делить на ноль нельзя") ; }
+        System.gc();
         return result;
     }
 }

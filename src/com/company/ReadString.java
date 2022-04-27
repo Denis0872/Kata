@@ -1,7 +1,8 @@
 package com.company;
 
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import static com.company.Main.flag;
 
 public class ReadString
@@ -9,18 +10,29 @@ public class ReadString
     private int num1;
     private int num2;
     private char oper;
-    private char oper1;
+
 
     public void transfer() throws InterruptedException {
+        String rrr= " II V X IX VIII VII VI IV III I ";
+        StringTokenizer tokens = new StringTokenizer(rrr, " ");
+        String[] rimskiye = new String[tokens.countTokens()];
+        int index = 0;
+       // String[] rimskiye = rrr.split("\\s");
+        while(tokens.hasMoreTokens()){
+            rimskiye[index] = tokens.nextToken();
+            ++index;
+        }
+       // String[] rimskiye = new String[]{"X", "IX", "VIII", "VII", "VI", "V", "IV", "III", "II", "I"};
+        List<String> rims = Arrays.stream(rimskiye).filter(Objects::nonNull).collect(Collectors.toList());
 
-        String[] rimskiye = {"X", "IX", "VIII", "VII", "VI", "V", "IV", "III", "II", "I"};
         String[] arabskiye = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
         char[] simbols = {'+', '-', '/', '*'};
         Thread.sleep(1000);
 
         System.out.println("Введите выражение, содержащее либо римские, либо арабские цифры от 1 до 10 с оператором +-/* между ними. выражение заканчивается знаком =");
         Scanner scanner = new Scanner(System.in);
-        String strokaVvoda = scanner.nextLine();
+        String strokaVvoda = scanner.nextLine().toUpperCase(Locale.ROOT).trim();
+
         char[] MassivDevided = new char[10];
 
         for (int i = 0; i < strokaVvoda.length(); i++) {
@@ -38,12 +50,14 @@ public class ReadString
                 oper = '/';
             }
         }
-        String StringAgain = String.valueOf(MassivDevided);
-        StringAgain = StringAgain.substring(0, strokaVvoda.length() - 1);
-        String[] blocks;
-        blocks = StringAgain.split("[+-/*]", 2);
 
-       try {
+        String StringAgain = String.valueOf(MassivDevided);
+
+        StringAgain = StringAgain.substring(0, strokaVvoda.length()-1).toUpperCase(Locale.ROOT).replaceAll(" ","");
+        String[] blocks;
+        blocks = StringAgain.split("[+-/*\\s+]", 2);
+
+        try {
 
             int i = 0;
             boolean found = false;
@@ -74,17 +88,17 @@ public class ReadString
             int k=0;
             int l=0;
             boolean Flag = false;
-            for (; k < rimskiye.length; k++) {
-                if (rimskiye[k].equals(blocks[0])||(rimskiye[k].equals(blocks[1])))
+            for (; k < rims.stream().count(); k++) {
+                if (rims.get(k).equals(blocks[0])||(rims.get(k).equals(blocks[1])))
                 {
                     Flag = false;
-                for (; l < arabskiye.length; l++) {
-                  if(arabskiye[l].equals(blocks[1])||arabskiye[l].equals(blocks[0]))
-                    {
-                        Flag = true;
-                        break;
+                    for (; l < arabskiye.length; l++) {
+                        if(arabskiye[l].equals(blocks[1])||arabskiye[l].equals(blocks[0]))
+                        {
+                            Flag = true;
+                            break;
+                        }
                     }
-                }
                 }
             }
             if (Flag) {
@@ -104,12 +118,12 @@ public class ReadString
         try{
             //boolean flag = false;
             for (int i = 0; i < rimskiye.length; i++){
-                if (rimskiye[i].equals(blocks[0]) || rimskiye[i].equals(blocks[1])){
-                    flag = true;
+                if (rimskiye[i].equals(blocks[0]) && rimskiye[i].equals(blocks[1])){
+                    flag = true;}
                 }
-                if(flag){
-                    num1 = RomToNum(blocks[0]);
-                    num2 = RomToNum(blocks[1]);
+                if(flag=true){
+                    num1 = romanToArabic(blocks[0]);
+                    num2 = romanToArabic(blocks[1]);
                     oper = strokaVvoda.charAt(blocks[0].length());
 
                     if ((num1 <num2 )&& (oper == '-')) {
@@ -121,29 +135,20 @@ public class ReadString
                     num1 = Integer.parseInt(blocks[0]);
                     num2 = Integer.parseInt(blocks[1]);
                     oper = strokaVvoda.charAt(blocks[0].length());
-                    oper1 = strokaVvoda.charAt(blocks[1].length());
-
                     if ((num1 > 10 || num1 < 0) || (num2 > 10 || num2 < 0)) {
                         System.out.println("Вы вышли из допустимого диапозона ввода: числа от 0 до 10 ");
                         throw new IllegalArgumentException();
                     }
-                  /*  for (int j = 0; j < 3; j++){
-                        boolean Flagg= true;
-                    if (oper1 =='+') {
-                        System.out.println("Введено слишком много операторов");
-                        throw new IllegalArgumentException();
-                        }
-                    }*/
                 }
 
-            }
+
 
         }
         catch (RuntimeException e) {
             throw new IllegalArgumentException("Общее: ошибка ввода данных");
         }
     }
-
+/*
     private  int RomToNum(String rom) {
 
         if (rom.equals("I")) {
@@ -167,9 +172,56 @@ public class ReadString
         } else if (rom.equals("X")) {
             return 10;
         }
+        System.gc();
         return -1;
     }
+*/
+enum RomanNumeral {
+    I(1), II(2), III(3), IV(4), V(5),
+    VI(6), VII(7), VIII(8), IX(9),
+    X(10);
 
+    private int value;
+
+    RomanNumeral(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public static List<RomanNumeral> getReverseSortedValues() {
+        return Arrays.stream(values())
+                .sorted(Comparator.comparing((RomanNumeral e) -> e.value).reversed())
+                .collect(Collectors.toList());
+    }
+}
+    public static int romanToArabic(String input) {
+
+        String romanNumeral = input.toUpperCase();
+        int result = 0;
+
+        List<RomanNumeral> romanNumerals = RomanNumeral.getReverseSortedValues();
+
+        int i = 0;
+
+        while ((romanNumeral.length() > 0) && (i < romanNumerals.size())) {
+            RomanNumeral symbol = romanNumerals.get(i);
+            if (romanNumeral.startsWith(symbol.name())) {
+                result += symbol.getValue();
+                romanNumeral = romanNumeral.substring(symbol.name().length());
+            } else {
+                i++;
+            }
+        }
+
+        if (romanNumeral.length() > 0) {
+            throw new IllegalArgumentException(input + " не может быть конвертировано");
+        }
+
+        return result;
+    }
     public   String NumToRom (int arab) {
         String[] roman = {"O", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"};
         try {
@@ -384,8 +436,8 @@ public class ReadString
                 return "C";
             }
             else if (arab <= 0) {
-            return "римских цифр не существует в отрицательном диапозоне";
-             }
+                return "римских цифр не существует в отрицательном диапозоне";
+            }
 
         }
         catch (InputMismatchException e) {System.out.println("Ошибка с форматом данных при переводе в римские цифры");

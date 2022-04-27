@@ -1,6 +1,7 @@
 package com.company;
 
 public class Main {
+
     public static boolean flag = false;
     public static void main(String[] args) {
         String rome;
@@ -16,6 +17,7 @@ public class Main {
                 continue;
             }
 
+
             int result = calc.calculate(reader.getNum1(), reader.getNum2(), reader.getOper());
             if (flag) {
                 rome = reader.NumToRom(result);
@@ -26,8 +28,12 @@ public class Main {
                 arab = result;
                 System.out.println("В арабских: " + " " + arab);
             }
+            flag=false;
+            System.gc();
         }
 
+
     }
+
 
 }
