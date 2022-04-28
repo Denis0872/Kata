@@ -28,11 +28,12 @@ public class ReadString
         char[] simbols = {'+', '-', '/', '*'};
         Thread.sleep(1000);
 
-        System.out.println("Введите выражение, содержащее либо римские, либо арабские цифры от 1 до 10 с оператором +-/* между ними. выражение заканчивается знаком =");
+        System.out.println("Введите выражение, содержащее либо римские-большие или маленькие, либо арабские цифры от 1 до 10 с оператором +-/* между ними. выражение заканчивается знаком =");
         Scanner scanner = new Scanner(System.in);
         String strokaVvoda = scanner.nextLine().toUpperCase(Locale.ROOT).trim();
 
         char[] MassivDevided = new char[10];
+
 
         for (int i = 0; i < strokaVvoda.length(); i++) {
             MassivDevided[i] = strokaVvoda.charAt(i);
@@ -49,27 +50,31 @@ public class ReadString
                 oper = '/';
             }
         }
-       /* try{
-            for (int i = 0; i < MassivDevided.length-1; i++)
-            {
-                int count = 0;
-                if(MassivDevided[i] == MassivDevided[i+1])
-                    count = count + 1;
-                System.out.println(count);
-                break;
 
-            }
-        }
-        catch (Exception e){
-            System.out.println("Лишний оператор");
-            throw new IllegalArgumentException("выражение содержит слишком много операторов");
-        }*/
         String StringAgain = String.valueOf(MassivDevided);
 
         StringAgain = StringAgain.substring(0, strokaVvoda.length()-1).toUpperCase(Locale.ROOT).replaceAll(" ","");
         String[] blocks;
 
-            blocks = StringAgain.split("[+-/*\\s+]", 2);
+            blocks = StringAgain.split("[+-/*\\s+]", 3);
+        try{
+            int count=0;
+            int p=0;
+            for(; p<=blocks.length; p++)
+            {
+                if (p!=0){
+                    count++;
+                }
+
+            }
+            if(count>2){
+                System.out.println("Введено слишком много цифр-максимум две");
+                throw new IllegalArgumentException("введите заново");
+            }
+    }
+        catch (Exception e){
+            throw new IllegalArgumentException("введите заново");
+        }
 
         try {
 
@@ -105,6 +110,7 @@ public class ReadString
                 if (rims.get(k).equals(blocks[0])||(rims.get(k).equals(blocks[1])))
                 {
                     Flag = false;
+
                     for (; l < arabskiye.length; l++) {
                         if(arabskiye[l].equals(blocks[1])||arabskiye[l].equals(blocks[0]))
                         {
@@ -117,16 +123,20 @@ public class ReadString
             if (Flag) {
                 System.out.println("Введены одновременно римские и арабские цифры");
                 throw new IllegalArgumentException("введите либо арабские цифры либо римские");
-            } else {
-                System.out.println(" Цифры введены корректно");
+            }
+
+            else {
+               System.out.println(" Цифры введены корректно");
             }
 
         }
+
         catch (Exception e)
         {
             System.out.println("Введены одновременно две системы счисления");
             throw new IllegalArgumentException("ошибка при вводе данных. ");
         }
+
         try{
 
             for (int i = 0; i < rimskiye.length; i++){
@@ -142,7 +152,18 @@ public class ReadString
                 num1 = romanToArabic(blocks[0]);
                 num2 = romanToArabic(blocks[1]);
                 oper = strokaVvoda.charAt(blocks[0].length());
+                try{
 
+                    for (int i = 0; i < rimskiye.length; i++){
+                        if (rimskiye[i].equals(blocks[1]) && rimskiye[i].equals(blocks[0]))
+                        {
+                            System.out.println("Введены две римские цифры");
+                        }
+                    }
+                }
+                catch (RuntimeException e) {
+                    throw new IllegalArgumentException("Одна или обе из цифр не римские");
+                }
                 if ((num1 <num2 )&& (oper == '-')) {
                     System.out.println("Не существует отрицательных римских чисел");
                     throw new IllegalArgumentException();
@@ -160,52 +181,56 @@ public class ReadString
             }
     }
 
-enum RomanNumeral {
-    I(1), II(2), III(3), IV(4), V(5),
-    VI(6), VII(7), VIII(8), IX(9),
-    X(10);
+     enum RomanNumeral {
+        I(1), II(2), III(3), IV(4), V(5),
+        VI(6), VII(7), VIII(8), IX(9),
+        X(10);
 
-    private int value;
+        private int value;
 
-    RomanNumeral(int value) {
-        this.value = value;
+        RomanNumeral(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public static List<RomanNumeral> getReverseSortedValues() {
+            return Arrays.stream(values())
+                    .sorted(Comparator.comparing((RomanNumeral e) -> e.value).reversed())
+                    .collect(Collectors.toList());
+        }
     }
+        public static int romanToArabic(String input) {
 
-    public int getValue() {
-        return value;
-    }
+            String romanNumeral = input.toUpperCase();
+            int result = 0;
 
-    public static List<RomanNumeral> getReverseSortedValues() {
-        return Arrays.stream(values())
-                .sorted(Comparator.comparing((RomanNumeral e) -> e.value).reversed())
-                .collect(Collectors.toList());
-    }
-}
-    public static int romanToArabic(String input) {
+            List<RomanNumeral> romanNumerals = RomanNumeral.getReverseSortedValues();
 
-        String romanNumeral = input.toUpperCase();
-        int result = 0;
+            int i = 0;
 
-        List<RomanNumeral> romanNumerals = RomanNumeral.getReverseSortedValues();
-
-        int i = 0;
-
-        while ((romanNumeral.length() > 0) && (i < romanNumerals.size())) {
-            RomanNumeral symbol = romanNumerals.get(i);
-            if (romanNumeral.startsWith(symbol.name())) {
-                result += symbol.getValue();
-                romanNumeral = romanNumeral.substring(symbol.name().length());
-            } else {
-                i++;
+            while ((romanNumeral.length() > 0) && (i < romanNumerals.size())) {
+                RomanNumeral symbol = romanNumerals.get(i);
+                if (romanNumeral.startsWith(symbol.name())) {
+                    result += symbol.getValue();
+                    romanNumeral = romanNumeral.substring(symbol.name().length());
+                } else {
+                    i++;
+                }
             }
+
+            if (romanNumeral.length() > 0) {
+                System.out.println("не может быть конвертировано");
+              throw new IllegalArgumentException(input + " не может быть конвертировано");
+
+            }
+
+            return result;
         }
 
-        if (romanNumeral.length() > 0) {
-            throw new IllegalArgumentException(input + " не может быть конвертировано");
-        }
 
-        return result;
-    }
     public   String NumToRom (int arab) {
         String[] roman = {"O", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"};
         try {
@@ -419,7 +444,7 @@ enum RomanNumeral {
             } else if (arab==100) {
                 return "C";
             }
-            else if (arab <= 0) {
+            else if (arab < 0) {
                 return "римских цифр не существует в отрицательном диапозоне";
             }
 
@@ -439,8 +464,8 @@ enum RomanNumeral {
     }
     public int getNum2 () {
         return num2;
-    }/*
-    private  int RomToNum(String rom) {
+    }
+   /* private  int RomToNum(String rom) {
 
         if (rom.equals("I")) {
             return 1;
