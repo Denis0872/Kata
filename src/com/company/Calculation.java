@@ -15,7 +15,8 @@ public class Calculation
                     throw new IllegalArgumentException();
             }
         }
-        catch (ArithmeticException  e) { System.out.println("Делить на ноль нельзя") ; }
+        catch (ArithmeticException  e) { System.out.println("Делить на ноль нельзя") ;
+            System.exit(1);}
         System.gc();
         return result;
     }
